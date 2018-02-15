@@ -1,0 +1,155 @@
+on post-fs-data
+    mkdir /data/logcat_log
+    mkdir /data/anr
+    mkdir /data/tombstones
+
+    chown system system /data/logcat_log
+    chown system system /data/anr
+    chown system system /data/tombstones
+
+    chmod 0775 /data/logcat_log
+    chmod 0775 /data/anr
+    chmod 0775 /data/tombstones
+
+service asus_kernelmsg /system/etc/init.asus.kernelmessage.sh
+    class late_start
+    user root
+    group root
+    disabled
+    oneshot
+
+on property:persist.asus.kernelmessage=0
+    stop asus_kernelmsg
+
+on property:persist.asus.kernelmessage=7
+    start asus_kernelmsg
+
+service emslogassist /system/etc/emslogassist.sh
+    user root
+    group root
+    oneshot
+    disabled
+    seclabel u:r:savelogmtp:s0
+
+service savelogmtp /system/etc/savelogmtp.sh
+    class late_start
+    user root
+    group root
+    oneshot
+    disabled
+    seclabel u:r:savelogmtp:s0
+
+service check-datalog /system/bin/sh /system/etc/init.asus.checkdatalog.sh
+    class late_start
+    user root
+    oneshot
+    seclabel u:r:dumpstate:s0
+
+on property:persist.asus.startlog=1
+    start check-datalog
+    start console
+
+on property:persist.asus.startlog=0
+    start check-datalog
+    stop  console
+
+service tcpdump-warp /system/bin/sh /system/xbin/netlog.sh
+    class late_start
+    user root
+    group root
+    disabled
+
+#log_kernel
+service logcat-kernel /system/bin/logcat -r 10000 -b kernel -n 20 -v threadtime -f /data/logcat_log/logcat-kernel.txt
+    class late_start
+    user system
+    disabled
+    seclabel u:r:dumpstate:s0
+
+#logcat log, the default is -b main -b system -b crash.
+service logcat /system/bin/logcat -r 10000 -n 20 -v threadtime -f /data/logcat_log/logcat.txt
+    class late_start
+    user system
+    disabled
+    seclabel u:r:dumpstate:s0
+
+#log_radio
+service logcat-radio /system/bin/logcat -r 10000 -b radio -n 20 -v threadtime -f /data/logcat_log/logcat-radio.txt
+    class late_start
+    user system
+    disabled
+    seclabel u:r:dumpstate:s0
+
+#log_events
+service logcat-events /system/bin/logcat -r 10000 -b events -n 20 -v threadtime -f /data/logcat_log/logcat-events.txt
+    class late_start
+    user system
+    disabled
+    seclabel u:r:dumpstate:s0
+
+#log_clean
+service logcat-clean /system/bin/logcat -b all -c
+    disabled
+    oneshot
+    seclabel u:r:dumpstate:s0
+
+service asus_chk_asdf /system/bin/sh /system/etc/init.asus.check_asdf.sh
+    user root
+    group root
+    disabled
+    oneshot
+    seclabel u:r:savelogmtp:s0
+
+on property:sys.boot_completed=1
+    start asus_chk_asdf
+
+service savelogs /system/etc/savelogs.sh
+    class late_start
+    user root
+    group sdcard_rw
+    oneshot
+    disabled
+    seclabel u:r:savelogmtp:s0
+
+service savelogscomplete /system/etc/savelogs_complete.sh
+    user root
+    group root
+    oneshot
+    disabled
+    seclabel u:r:zygote:s0
+
+service savelogsdumps /system/etc/savelogs_dumpstate.sh
+    user root
+    group root
+    oneshot
+    disabled
+
+on property:persist.asus.savelogs.complete=1
+    start savelogscomplete
+
+on property:persist.asus.savelogs.dumpstate=1
+    start savelogsdumps
+
+on property:persist.asus.savelogs=*
+    start savelogs
+
+on property:persist.asus.checklogsize=*
+    start checklogsize
+
+service checklogsize /system/etc/init.asus.checklogsize.sh
+    class late_start
+    user root
+    group sdcard_rw
+    oneshot
+    disabled
+    seclabel u:r:savelogmtp:s0
+
+service savelogsplus /system/etc/savelogs_plus.sh
+    user root
+    group root
+    oneshot
+    disabled
+    seclabel u:r:dumpstate:s0
+
+on property:asus.savelogmtp.folder=*
+    start savelogsplus

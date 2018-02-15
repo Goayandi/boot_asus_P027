@@ -1,0 +1,43 @@
+on init
+#	fake to CDP case
+#	write /sys/module/musb_hdrc/parameters/musb_skip_charge_detect 1
+
+# 	set battery thread free
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 0E8D
+    write /sys/class/android_usb/android0/idProduct 2008
+    write /sys/class/android_usb/android0/functions mtp
+    write /sys/class/android_usb/android0/enable 1
+
+#	make this twice to keep following action not race with batyery thread
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 0E8D
+    write /sys/class/android_usb/android0/idProduct 2008
+    write /sys/class/android_usb/android0/functions mtp
+    write /sys/class/android_usb/android0/enable 1
+
+# 	distinguish USB shoulde connect or not by this, CDP vs SDP
+	write /sys/devices/platform/mt_usb/cmode 2
+    mkdir /asdf 0775 system system
+
+
+on property:ro.debuggable=1
+# 	restore cmode to normal for making USB enumeration
+	write /sys/devices/platform/mt_usb/cmode 1
+
+on fs
+    mkdir /dev/block/platform/mtk-msdc.0
+    symlink ../soc/11230000.mmc /dev/block/platform/mtk-msdc.0/11230000.MSDC0
+    wait /dev/block/platform/mtk-msdc.0/11230000.MSDC0/by-name/asdf
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.MSDC0/by-name/asdf /asdf nosuid nodev nomblk_io_submit notrim data=ordered,barrier=1,nodelalloc,errors=panic
+    write /proc/asusevtlog "[recovery] Enter ROS mode"
+    wait /dev/block/platform/mtk-msdc.0/11230000.MSDC0/by-name/system
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.MSDC0/by-name/system /system ro barrier=1
+
+on post-fs-data
+    chown system system /asdf
+    chmod 0775 /asdf
+    restorecon_recursive /asdf
+    # Tuxera NTFS and exFAT modules, but disable ntfs support
+    # insmod /system/lib/modules/tntfs.ko
+    insmod /system/lib/modules/texfat.ko

@@ -1,0 +1,302 @@
+import init.factory.rc
+
+on init
+symlink /persist /factory
+on fs
+
+# for fingerprint
+    mkdir /dev/validity 0775 system root
+
+    chmod 0777 /dev/vfsspi
+    chown system root /dev/vfsspi
+
+    chmod 0777 /dev/fingerprint
+    chown system root /dev/fingerprint
+
+on post-fs
+on post-fs-data
+
+# fingerprint
+    mkdir /data/validity
+    chown system system /data/validity
+    chmod 0775 /data/validity
+
+#  remove touch zstylus tmp data
+    rm /data/temp_for_zstylus
+
+    chown system system /persist
+    chmod 771 /persist
+    # Set SELinux security contexts on upgrade or policy update.
+    restorecon_recursive /persist
+
+# Disable demoapp by default
+   setprop persist.sys.enableAPD 0
+
+# Disable native bar
+    setprop qemu.hw.mainkeys 1
+
+#
+# Invensense IIO settings
+#
+# acc/gyro
+    # folders
+    chown system root /sys/bus/iio/devices/iio:device0/
+    chown system root /sys/bus/iio/devices/iio:device0/buffer
+    chown system root /sys/bus/iio/devices/iio:device0/scan_elements
+    chown system root /sys/bus/iio/devices/iio:device0/trigger
+    chown system root /sys/bus/iio/devices/iio:device0/power
+    # files
+    chown system root /dev/iio:device0
+    chmod 660         /dev/iio:device0
+    chown system root /sys/bus/iio/devices/iio:device0/uevent
+    chown system root /sys/bus/iio/devices/iio:device0/dev
+    chown system root /sys/bus/iio/devices/iio:device0/buffer/length
+    chown system root /sys/bus/iio/devices/iio:device0/buffer/enable
+    chown system root /sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_en
+    chown system root /sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_type
+    chown system root /sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_index
+    chown system root /sys/bus/iio/devices/iio:device0/sampling_frequency_available
+    chown system root /sys/bus/iio/devices/iio:device0/reg_dump
+    chown system root /sys/bus/iio/devices/iio:device0/temperature
+    chown system root /sys/bus/iio/devices/iio:device0/status
+    chown system root /sys/bus/iio/devices/iio:device0/master_enable
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_scale
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_x_calibbias
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_y_calibbias
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_z_calibbias
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_x_offset
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_y_offset
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_z_offset
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_self_test_scale
+    chown system root /sys/bus/iio/devices/iio:device0/self_test_samples
+    chown system root /sys/bus/iio/devices/iio:device0/self_test_threshold
+    chown system root /sys/bus/iio/devices/iio:device0/gyro_enable
+    chown system root /sys/bus/iio/devices/iio:device0/gyro_fifo_enable
+    chown system root /sys/bus/iio/devices/iio:device0/gyro_wakeup_enable
+    chown system root /sys/bus/iio/devices/iio:device0/gyro_rate
+    chown system root /sys/bus/iio/devices/iio:device0/power_state
+    chown system root /sys/bus/iio/devices/iio:device0/sampling_frequency
+    chown system root /sys/bus/iio/devices/iio:device0/self_test
+    chown system root /sys/bus/iio/devices/iio:device0/gyro_matrix
+    chown system root /sys/bus/iio/devices/iio:device0/secondary_name
+    chown system root /sys/bus/iio/devices/iio:device0/event_accel_motion
+    chown system root /sys/bus/iio/devices/iio:device0/event_smd
+    chown system root /sys/bus/iio/devices/iio:device0/event_pedometer
+    chown system root /sys/bus/iio/devices/iio:device0/flush_batch
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_scale
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_x_calibbias
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_y_calibbias
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_z_calibbias
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_self_test_scale
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_x_offset
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_y_offset
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_z_offset
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_x_dmp_bias
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_y_dmp_bias
+    chown system root /sys/bus/iio/devices/iio:device0/in_accel_z_dmp_bias
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_x_dmp_bias
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_y_dmp_bias
+    chown system root /sys/bus/iio/devices/iio:device0/in_anglvel_z_dmp_bias
+    chown system root /sys/bus/iio/devices/iio:device0/pedometer_int_on
+    chown system root /sys/bus/iio/devices/iio:device0/pedometer_on
+    chown system root /sys/bus/iio/devices/iio:device0/pedometer_steps
+    chown system root /sys/bus/iio/devices/iio:device0/pedometer_time
+    chown system root /sys/bus/iio/devices/iio:device0/pedometer_counter
+    chown system root /sys/bus/iio/devices/iio:device0/pedometer_step_thresh
+    chown system root /sys/bus/iio/devices/iio:device0/pedometer_int_thresh
+    chown system root /sys/bus/iio/devices/iio:device0/smd_enable
+    chown system root /sys/bus/iio/devices/iio:device0/smd_threshold
+    chown system root /sys/bus/iio/devices/iio:device0/smd_delay_threshold
+    chown system root /sys/bus/iio/devices/iio:device0/smd_delay_threshold2
+    chown system root /sys/bus/iio/devices/iio:device0/dmp_on
+    chown system root /sys/bus/iio/devices/iio:device0/dmp_int_on
+    chown system root /sys/bus/iio/devices/iio:device0/dmp_event_int_on
+    chown system root /sys/bus/iio/devices/iio:device0/step_indicator_on
+    chown system root /sys/bus/iio/devices/iio:device0/batchmode_timeout
+    chown system root /sys/bus/iio/devices/iio:device0/batchmode_wake_fifo_full_on
+    chown system root /sys/bus/iio/devices/iio:device0/six_axes_q_on
+    chown system root /sys/bus/iio/devices/iio:device0/six_axes_q_rate
+    chown system root /sys/bus/iio/devices/iio:device0/three_axes_q_on
+    chown system root /sys/bus/iio/devices/iio:device0/three_axes_q_rate
+    chown system root /sys/bus/iio/devices/iio:device0/ped_q_on
+    chown system root /sys/bus/iio/devices/iio:device0/ped_q_rate
+    chown system root /sys/bus/iio/devices/iio:device0/step_detector_on
+    chown system root /sys/bus/iio/devices/iio:device0/accel_enable
+    chown system root /sys/bus/iio/devices/iio:device0/accel_fifo_enable
+    chown system root /sys/bus/iio/devices/iio:device0/accel_wakeup_enable
+    chown system root /sys/bus/iio/devices/iio:device0/accel_rate
+    chown system root /sys/bus/iio/devices/iio:device0/firmware_loaded
+    chown system root /sys/bus/iio/devices/iio:device0/accel_matrix
+    chown system root /sys/bus/iio/devices/iio:device0/motion_lpa_on
+    chown system root /sys/bus/iio/devices/iio:device0/motion_lpa_freq
+    chown system root /sys/bus/iio/devices/iio:device0/motion_lpa_threshold
+    chown system root /sys/bus/iio/devices/iio:device0/in_magn_scale
+    chown system root /sys/bus/iio/devices/iio:device0/compass_enable
+    chown system root /sys/bus/iio/devices/iio:device0/compass_rate
+    chown system root /sys/bus/iio/devices/iio:device0/compass_matrix
+    chown system root /sys/bus/iio/devices/iio:device0/name
+    chown system root /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+    chown system root /sys/bus/iio/devices/iio:device0/power/runtime_status
+    chown system root /sys/bus/iio/devices/iio:device0/power/control
+    chown system root /sys/bus/iio/devices/iio:device0/power/runtime_suspended_time
+    chown system root /sys/bus/iio/devices/iio:device0/power/runtime_active_time
+    chown system root /sys/bus/iio/devices/iio:device0/power/autosuspend_delay_ms
+    chown system root /sys/bus/iio/devices/iio:device0/dmp_firmware
+    chown system root /sys/bus/iio/devices/iio:device0/six_axes_q_value
+# mag
+    # folders
+    chown system root /sys/bus/iio/devices/iio:device1/
+    chown system root /sys/bus/iio/devices/iio:device1/buffer
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements
+    chown system root /sys/bus/iio/devices/iio:device1/trigger
+    chown system root /sys/bus/iio/devices/iio:device1/power
+    # files
+    chown system root /dev/iio:device1
+    chmod 660         /dev/iio:device1
+    chown system root /sys/bus/iio/devices/iio:device1/uevent
+    chown system root /sys/bus/iio/devices/iio:device1/dev
+    chown system root /sys/bus/iio/devices/iio:device1/name
+    chown system root /sys/bus/iio/devices/iio:device1/self_test
+    chown system root /sys/bus/iio/devices/iio:device1/status
+    chown system root /sys/bus/iio/devices/iio:device1/value
+    chown system root /sys/bus/iio/devices/iio:device1/buffer/length
+    chown system root /sys/bus/iio/devices/iio:device1/buffer/enable
+    chown system root /sys/bus/iio/devices/iio:device1/compass_matrix
+    chown system root /sys/bus/iio/devices/iio:device1/in_magn_scale
+    chown system root /sys/bus/iio/devices/iio:device1/sampling_frequency
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_timestamp_en
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_timestamp_type
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_timestamp_index
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_magn_x_en
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_magn_x_type
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_magn_x_index
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_magn_y_en
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_magn_y_type
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_magn_y_index
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_magn_z_en
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_magn_z_type
+    chown system root /sys/bus/iio/devices/iio:device1/scan_elements/in_magn_z_index
+
+    chown system root /sys/bus/iio/devices/iio:device0/cal_data_auto_load
+    #chown system root /sys/class/invensense_motion/invensense_mpl_motion/inv_mpl_motion
+    chown system root /sys/devices/virtual/invensense_motion/invensense_mpl_motion/inv_mpl_motion
+    chown system root /sys/bus/iio/devices/iio:device0/zrmot_disable_int2cpu
+    chown system root /sys/bus/iio/devices/iio:device0/zrmot_disable_int2cpu_dur_ms
+
+# als
+    chown system root /sys/class/sensors/di_sensors/ahthres
+    chown system root /sys/class/sensors/di_sensors/als_poll_delay
+    chown system root /sys/class/sensors/di_sensors/althres
+    chown system root /sys/class/sensors/di_sensors/calibration
+    chown system root /sys/class/sensors/di_sensors/dummy
+    chown system root /sys/class/sensors/di_sensors/em
+    chown system root /sys/class/sensors/di_sensors/lux
+    chown system root /sys/class/sensors/di_sensors/mode
+    chown system root /sys/class/sensors/di_sensors/range
+    chown system root /sys/class/sensors/di_sensors/status
+
+# DTS_EAGLE START
+    mkdir /data/misc/dts 0771 media camera
+# DTS_EAGLE END
+
+# eMMC total size for AsusSetting
+    symlink /sys/bus/mmc/devices/mmc0:0001/emmc_total_size /data/data/emmc_total_size
+
+
+service hostapd_cmd /system/bin/hostapd_cmd
+    class main
+    group system wifi
+    user root
+    oneshot
+    disabled
+
+on property:persist.sys.wifi.hostapd.cmd=*
+    start hostapd_cmd
+
+service touch_z500m /system/bin/sh /system/bin/z500m_touchinit.sh
+    class main
+    oneshot
+    seclabel u:r:touch_z500m:s0
+
+# DTS_EAGLE START
+# DTS HPX service
+service dts_hpx_service /system/bin/dts_hpx_service
+    class late_start
+    user system
+    group audio media camera
+# DTS_EAGLE END
+
+service asus_fp_init /system/bin/sh /system/bin/asus_fp_init.sh
+    class main
+    oneshot
+    seclabel u:r:asus_fp_init:s0
+
+on boot
+
+# ASUS_BSP : adb enable property
+     setprop factory.adbon ${ro.boot.adb.enable}
+
+#  add touch zstylus default enable property write for Z500M
+    write /data/property/persist.asus.zstylus.recover 1
+    setprop sys.tmp.zstylus ${persist.asus.zstylus}
+    setprop persist.asus.zstylus 1
+    write /data/temp_for_zstylus ${sys.tmp.zstylus}
+
+on property:persist.asus.zstylus.recover=1
+    wait /data/temp_for_zstylus
+	setprop persist.asus.zstylus ${sys.tmp.zstylus}
+
+# add touch ZenMotion property write for Z500M
+on property:persist.asus.gesture.type=*
+    write /sys/bus/i2c/devices/0-004a/gesture ${persist.asus.gesture.type}
+on property:persist.asus.dclick=*
+    write /sys/bus/i2c/devices/0-004a/dclick ${persist.asus.dclick}
+
+#  add touch Zstylus property write for Z500M
+on property:persist.asus.zstylus=*
+    write /sys/bus/i2c/devices/0-004a/zstylus_enable ${persist.asus.zstylus}
+
+#  add touch Zstylus only mode property write for Z500M
+on property:persist.asus.zstylus_only_mode=*
+    write /sys/bus/i2c/devices/0-004a/zstylus_only_enable ${persist.asus.zstylus_only_mode}
+
+# Add keypad_read service for Keypad_Test
+service keypad_read /system/bin/sh /system/bin/keypad_read_permission.sh
+    oneshot
+    disabled
+    seclabel u:r:keypad_read_permission:s0
+
+on property:dev.bootcomplete=1
+    start keypad_read
+
+service save-hcidump /system/bin/sh /system/etc/init.asus.hcidump.sh
+    class late_start
+    user root
+    group root
+    disabled
+    oneshot
+    seclabel u:r:bluetooth_hcidump:s0
+
+# for fingerprint
+service fingerprintd /system/bin/fingerprintd
+    class late_start
+    user system
+
+service vfmService /system/bin/vfmService
+    class late_start
+    user system
+
+on property:persist.asus.fp.wakeup=true
+    setprop persist.sys.fp.fingerUpCheck 1
+    write /sys/devices/asus_fingerprint/wakeup true
+
+on property:persist.asus.fp.wakeup=false
+    setprop persist.sys.fp.fingerUpCheck 0
+    write /sys/devices/asus_fingerprint/wakeup true
+
+# for demo app charging limit
+on property:persist.sys.enableAPD=1
+    write /sys/bus/i2c/devices/4-006a/demo_app_status 1
+
+on property:persist.sys.enableAPD=0
+    write /sys/bus/i2c/devices/4-006a/demo_app_status 0
